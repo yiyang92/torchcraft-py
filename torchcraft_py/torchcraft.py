@@ -1,8 +1,8 @@
 import zmq
 
-import frame
-import proto
-import utils
+from . import frame
+from . import proto
+from . import utils
 
 DEBUG = 0  # Can take values 0, 1, 2 (from no output to most verbose)
 
@@ -10,11 +10,8 @@ mode = {'micro_battles': True, 'replay': False}
 
 
 class Client:
-    def __init__(self, server_ip, server_port):
-        assert (server_ip != ''), "Server ip cannot be empty"
-        assert (server_port != ''), "Server port cannot be empty"
-
-        self.server = "tcp://" + server_ip + ":" + server_port
+    def __init__(self, server_ip="127.0.0.1", server_port="11111"):
+        self.server = "tcp://" + str(server_ip) + ":" + str(server_port)
         self.socket = None
         self.message_just_sent = False
 
@@ -28,7 +25,7 @@ class Client:
                         'units_myself': {},
                         'units_enemy': {}}
         if DEBUG > 0:
-            print "Connecting to the TorchCraft server: " + self.server
+            print("Connecting to the TorchCraft server: ", self.server)
         context = zmq.Context()
         self.socket = context.socket(zmq.REQ)
         self.socket.connect(self.server)
@@ -36,7 +33,7 @@ class Client:
         # Send hello message
         hello = "protocol=" + proto.VERSION + ",micro_mode=" \
                 + str(mode['micro_battles'])
-        self.socket.send(hello)
+        self.socket.send(hello.encode('ascii'))
 
         # Receive setup message
         msg = self.socket.recv()
@@ -44,14 +41,14 @@ class Client:
 
         self.message_just_sent = False
         if DEBUG > 0:
-            print "TorchCraft server connected"
+            print("TorchCraft server connected")
 
         return msg
 
     def receive(self):
         if not self.message_just_sent:
             if DEBUG > 1:
-                print 'Unexpectedly sending ""'
+                print("Unexpectedly sending """)
             self.send("")
 
         if not self.socket.poll(30000):  # 30 secs
@@ -69,7 +66,7 @@ class Client:
         if self.message_just_sent:
             tmp = self.receive()
             if DEBUG > 1:
-                print "Unexpectedly received: " + tmp
+                print("Unexpectedly received: " + tmp)
 
         if type(msg) is list:
             result = ""

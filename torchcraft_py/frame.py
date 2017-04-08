@@ -1,6 +1,7 @@
+from __future__ import print_function
 import json
 
-import utils
+from . import utils
 
 
 class Order:
@@ -79,7 +80,7 @@ class Unit:
             return
 
         self.orders = []
-        for i in xrange(0, n_orders):
+        for i in range(0, n_orders):
             self.orders.append(Order())
             self.orders[i].first_frame, c = utils.get_int(args, c)
             self.orders[i].type, c = utils.get_int(args, c)
@@ -246,7 +247,7 @@ class Frame:
 
             # Build dictionary of uid -> position in current frame unit vector
             idx = {}
-            for i in xrange(0, len(self.units[player_id])):
+            for i in range(0, len(self.units[player_id])):
                 idx[self.units[player_id][i].id] = i
             # Iterate over units in next frame
             for unit in player_units:
@@ -281,14 +282,14 @@ class Frame:
         if n_player < 0:
             utils.print_err("Corrupted replay: units n_player < 0")
             return
-        for i in xrange(0, n_player):
+        for i in range(0, n_player):
             id_player, c = utils.get_int(args, c)
             n_units, c = utils.get_int(args, c)
             if n_units < 0:
                 utils.print_err("Corrupted replay: n_units < 0")
                 return
             self.units[id_player] = []
-            for j in xrange(0, n_units):
+            for j in range(0, n_units):
                 self.units[id_player].append(Unit())
                 c = self.units[id_player][j].read(args, c)
 
@@ -296,14 +297,14 @@ class Frame:
         if n_player < 0:
             utils.print_err("Corrupted replay: actions n_player < 0")
             return
-        for i in xrange(0, n_player):
+        for i in range(0, n_player):
             id_player, c = utils.get_int(args, c)
             n_actions, c = utils.get_int(args, c)
             if n_actions < 0:
                 utils.print_err("Corrupted replay: n_actions < 0")
                 return
             self.actions[id_player] = []
-            for j in xrange(0, n_actions):
+            for j in range(0, n_actions):
                 self.actions[id_player].append(Action())
                 self.actions[id_player][j].uid, c = utils.get_int(args, c)
                 self.actions[id_player][j].aid, c = utils.get_int(args, c)
@@ -313,14 +314,14 @@ class Frame:
                     return
 
                 self.actions[id_player][j].action = [0] * size_a
-                for k in xrange(0, size_a):
+                for k in range(0, size_a):
                     self.actions[id_player][j].action[k], c = utils.get_int(args, c)
 
         n_player, c = utils.get_int(args, c)
         if n_player < 0:
             utils.print_err("Corrupted replay: resources n_player < 0")
             return
-        for i in xrange(0, n_player):
+        for i in range(0, n_player):
             id_player, c = utils.get_int(args, c)
             self.resources[id_player] = Resources()
             c = self.resources[id_player].read(args, c)
@@ -329,7 +330,7 @@ class Frame:
         if n_bullets < 0:
             utils.print_err("Corrupted replay: n_bullets < 0")
             return
-        for i in xrange(0, n_bullets):
+        for i in range(0, n_bullets):
             self.bullets.append(Bullet())
             c = self.bullets[i].read(args, c)
         self.reward, c = utils.get_int(args, c)
